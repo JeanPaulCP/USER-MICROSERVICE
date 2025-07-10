@@ -6,24 +6,36 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def lambda_handler(event, context):
-    try:
-        user_id = event['body']['user_id']
-        password = event['body']['password']
-        nombre_tabla = os.environ['TABLE_USER']
+    print(event)
 
-        if user_id and password:
+    try:
+        # Extraer campos desde el body
+        username = event['body']['username']
+        password = event['body']['password']
+        tenant_id = event['body']['tenant_id']
+
+        # Obtener nombre de la tabla desde variable de entorno
+        nombre_tabla = os.environ['TABLE_NAME_USERS']
+
+        # Validación simple
+        if username and password and tenant_id:
             hashed_password = hash_password(password)
+
+            # Guardar en DynamoDB
             dynamodb = boto3.resource('dynamodb')
             t_usuarios = dynamodb.Table(nombre_tabla)
             t_usuarios.put_item(
                 Item={
-                    'user_id': user_id,
-                    'password': hashed_password,
+                    'tenant_id': tenant_id,
+                    'username': username,
+                    'password': hashed_password
                 }
             )
+
             mensaje = {
                 'message': 'User registered successfully',
-                'user_id': user_id
+                'username': username,
+                'tenant_id': tenant_id
             }
             return {
                 'statusCode': 200,
@@ -31,7 +43,7 @@ def lambda_handler(event, context):
             }
         else:
             mensaje = {
-                'error': 'Invalid request body: missing user_id or password'
+                'error': 'Invalid request body: missing username, password or tenant_id'
             }
             return {
                 'statusCode': 400,
