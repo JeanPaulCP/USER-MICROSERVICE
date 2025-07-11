@@ -1,18 +1,22 @@
 import os
 import boto3
 import hashlib
+import json
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def lambda_handler(event, context):
     print(event)
-
     try:
-        # Extraer campos desde el body
-        username = event['body']['username']
-        password = event['body']['password']
-        tenant_id = event['body']['tenant_id']
+        body = event['body']
+        print(body)
+        body = json.loads(body)
+        print(body)
+
+        username = body['username']
+        password = body['password']
+        tenant_id = body['tenant_id']
 
         # Obtener nombre de la tabla desde variable de entorno
         nombre_tabla = os.environ['TABLE_NAME_USERS']
@@ -39,7 +43,7 @@ def lambda_handler(event, context):
             }
             return {
                 'statusCode': 200,
-                'body': mensaje
+                'body': json.dumps(mensaje)
             }
         else:
             mensaje = {
@@ -47,7 +51,7 @@ def lambda_handler(event, context):
             }
             return {
                 'statusCode': 400,
-                'body': mensaje
+                'body': json.dumps(mensaje)
             }
 
     except Exception as e:
@@ -57,5 +61,5 @@ def lambda_handler(event, context):
         }
         return {
             'statusCode': 500,
-            'body': mensaje
+            'body': json.dumps(mensaje)
         }
