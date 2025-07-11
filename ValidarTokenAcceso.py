@@ -5,8 +5,13 @@ import json
 
 def lambda_handler(event, context):
     print(event) 
-    tenant_id = event['body']['tenant_id']
-    token = event['body']['token']  
+    body = event['body']
+    print(body)
+    body = json.loads(body)
+    print(body)
+
+    tenant_id = body['tenant_id']
+    token = body['token']  
     tabla_token = os.environ['TABLE_NAME_TOKENS']
 
     # Proceso
