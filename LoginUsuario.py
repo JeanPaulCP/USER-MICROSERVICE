@@ -2,6 +2,7 @@ import boto3
 import hashlib
 import uuid
 import os
+import json
 from datetime import datetime, timedelta
 
 def hash_password(password):
@@ -69,18 +70,17 @@ def lambda_handler(event, context):
             }
         )
         responseMessage = {
-            'statusCode': 200,
-            'body': {
-                'message': 'Login exitoso',
-                'token': token,
-                'expires': fecha_hora_exp.strftime('%Y-%m-%d %H:%M:%S'),
-                'tenant_id': tenant_id,
-                'username': username
-            }
+            'message': 'Login exitoso',
+            'token': token,
+            'expires': fecha_hora_exp.strftime('%Y-%m-%d %H:%M:%S'),
+            'tenant_id': tenant_id,
+            'username': username
         }
         print(responseMessage)
-
-        return json.dumps(responseMessage)
+        return {
+            'statusCode': 200,
+            'body': json.dumps(responseMessage)
+        }
 
     except Exception as e:
         print("Exception:", str(e))
