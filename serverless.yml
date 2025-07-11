@@ -9,7 +9,7 @@ provider:
   timeout: 30
   stage: ${opt:stage, 'dev'}
   iam:
-    role: arn:aws:iam::418047659300:role/LabRole
+    role: arn:aws:iam::574821159402:role/LabRole
   environment:
     TABLE_NAME_USERS: ${sls:stage}-t_usuarios
     TABLE_NAME_TOKENS: ${sls:stage}-t_tokens_acceso
@@ -49,7 +49,7 @@ resources:
           - AttributeName: tenant_id
             KeyType: HASH
           - AttributeName: username
-            KeyType: HASH
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
 
     TokensTable:
