@@ -11,9 +11,14 @@ def lambda_handler(event, context):
     print(event)
 
     try:
-        tenant_id = event['body']['tenant_id']
-        username = event['body']['username']
-        password = event['body']['password']
+        body = event['body']
+        print(body)
+        body = json.loads(body)
+        print(body)
+
+        tenant_id = body['tenant_id']
+        username = body['username']
+        password = body['password']
         hashed_password = hash_password(password)
 
         # Obtener nombres de tablas desde variables de entorno
@@ -75,7 +80,7 @@ def lambda_handler(event, context):
         }
         print(responseMessage)
 
-        return responseMessage
+        return json.dumps(responseMessage)
 
     except Exception as e:
         print("Exception:", str(e))
