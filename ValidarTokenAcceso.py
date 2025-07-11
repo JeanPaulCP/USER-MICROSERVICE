@@ -1,19 +1,25 @@
 import os
 import boto3
 from datetime import datetime
+import json
 
 def lambda_handler(event, context):
-    # Entrada (json)
-    token = event['body']['token']
-    tabla_token = os.environ['TABLE_TOKEN']
+    print(event) 
+    tenant_id = event['body']['tenant_id']
+    token = event['body']['token']  
+    tabla_token = os.environ['TABLE_NAME_TOKENS']
+
     # Proceso
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(tabla_token)
+
     response = table.get_item(
-        Key={
-            'token': token
+    Key={
+        'tenant_id': tenant_id,
+        'token': token
         }
     )
+
     if 'Item' not in response:
         return {
             'statusCode': 403,
@@ -31,5 +37,5 @@ def lambda_handler(event, context):
     # Salida (json)
     return {
         'statusCode': 200,
-        'body': 'Token válido'
+        'body': 'Token valido'
     }
